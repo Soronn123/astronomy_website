@@ -1,11 +1,11 @@
 import datetime
 import sqlalchemy
 from .db_session import SqlAlchemyBase
-from sqlalchemy import orm
+from flask_login import UserMixin
+from sqlalchemy.orm import relationship
 
 
-
-class User(SqlAlchemyBase):
+class User(SqlAlchemyBase, UserMixin):
     __tablename__ = 'users'
 
     id = sqlalchemy.Column(sqlalchemy.Integer,
@@ -16,17 +16,8 @@ class User(SqlAlchemyBase):
     hashed_password = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     created_user = sqlalchemy.Column(sqlalchemy.DateTime,
                                      default=datetime.datetime.now)
-    role = sqlalchemy.Column(sqlalchemy.String, default="User")
+    role = sqlalchemy.Column(sqlalchemy.String, default="Пользователь")
     avatar = sqlalchemy.Column(sqlalchemy.String, nullable=True)
-
-    def is_active(self):
-        return True
-
-    def get_id(self):
-        return self.id
-
-    def is_authenticated(self):
-        return True
-
-    def is_anonymous(self):
-        return False
+    news = relationship("News", back_populates='user')
+    posts = relationship("Posts", back_populates='user')
+    comments = relationship('Comments', back_populates="user", lazy='subquery')

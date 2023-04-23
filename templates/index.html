@@ -16,9 +16,14 @@
 		<ul class="dws-ul">
 			<li class="dws-li"><a href="/"><i class="fa fa-home" aria-hidden="true"></i>Главная</a></li>
 			<li class="dws-li"><a href="/lecture"><i class="fa fa-globe" aria-hidden="true"></i>Планеты</a></li>
-			<li class="dws-li"><a href="/scientist"><i class="fa fa-users" aria-hidden="true"></i>Ученые</a></li>
+			<li class="dws-li"><a href="/news"><i class="fa fa-users" aria-hidden="true"></i>Новости</a></li>
 			<li class="dws-li"><a href="/shop"><i class="fa fa-newspaper-o" aria-hidden="true"></i>Магазин</a></li>
-			<li class="dws-li"><a href="/guest"><i class="fa fa-user" aria-hidden="true"></i>{{ user }}</a></li>
+			<li class="dws-li"><a href="/guest"><i class="fa fa-user" aria-hidden="true"></i>
+				{% if current_user.is_authenticated %}
+					{{ current_user.nickname }}
+				{% else %}
+					Гость
+				{% endif %}</a></li>
 		</ul>
 	</div>
 </header>
