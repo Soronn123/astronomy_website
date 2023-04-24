@@ -1,7 +1,7 @@
 {% extends "index.html" %}
 
 {% block content %}
-<div style="background: rgba(255, 255, 255, 0.774); width:65%; margin-left: 350px; margin-top: 50px">
+<div style="width:65%; margin-left: 350px; margin-top: 50px">
     <h3 style="margin-left: 25px">{{ post.created_date }}</h3>
     <div style="display: inline-flex;">
         <h3>{{ post.type }}</h3>
@@ -51,5 +51,4 @@
     <hr style="margin-left:25px; margin-right: 25px">
     {% endfor %}
 </div>
-<hr style="width: 50%; margin-left:25px">
 {% endblock %}

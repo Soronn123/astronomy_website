@@ -234,6 +234,9 @@ def str_7():
                 for comment in user.comments:
                     db_sess.delete(comment)
 
+                for new in user.news:
+                    db_sess.delete(new)
+
                 if os.path.isfile('static/img/Ava/' + user.avatar) and not checked_avatar('static/img/Ava/' + user.avatar):
                     os.remove('static/img/Ava/' + user.avatar)
                 db_sess.delete(user)
