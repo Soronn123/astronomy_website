@@ -27,7 +27,7 @@ login_manager.init_app(app)
 
 @app.route('/delete_comment/<int:id>', methods=['GET', 'POST'])
 @login_required
-def delete_comment(id):
+def str_19(id):
     db_sess = db_session.create_session()
     comment = db_sess.query(Comments).filter(Comments.id == id).first()
     post_id = comment.post_id
@@ -42,14 +42,14 @@ def delete_comment(id):
 
 @app.route('/shop', methods=['GET', 'POST'])
 @login_required
-def str_17():
+def str_18():
     print(current_user.id)
     return render_template('shop.html')
 
 
 @app.route('/add_comment/<int:id>', methods=['GET', 'POST'])
 @login_required
-def str_16(id):
+def str_17(id):
     form = CommentsForm()
     db_sess = db_session.create_session()
     post = db_sess.query(Posts).filter(Posts.id == id).first()
@@ -63,6 +63,19 @@ def str_16(id):
         db_sess.commit()
         return redirect(f'/post/{id}')
     return render_template('coment.html', form=form, post=post)
+
+
+@app.route('/delete_post/<int:id>', methods=['GET', 'POST'])
+@login_required
+def str_16(id):
+    db_sess = db_session.create_session()
+    post = db_sess.query(Posts).filter(Posts.id == id).first()
+    if post:
+        db_sess.delete(post)
+        db_sess.commit()
+    else:
+        abort(404)
+    return redirect('/lecture')
 
 
 @app.route('/post/<int:id>')
@@ -214,7 +227,6 @@ def str_8():
     return render_template("lecture.html", posts=post)
 
 
-#Не проверено
 @app.route('/delete_user', methods=['GET', 'POST'])
 @login_required
 def str_7():
