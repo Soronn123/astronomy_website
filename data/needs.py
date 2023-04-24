@@ -40,6 +40,10 @@ def random_avatar():
     return random.choice(avatar_list)
 
 
+def checked_avatar(avatar):
+    return avatar in ['avatar1.jpg', 'avatar2.png', 'avatar3.jpg', 'avatar4.png', 'avatar5.png', 'avatar6.png']
+
+
 def password_check_regular(passwd):
     SpecialSym = ['$', '@', '#', '%']
 

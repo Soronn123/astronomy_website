@@ -10,7 +10,8 @@ from data.users import User
 from data.post import Posts
 from data.comment import Comments
 from data.news import News
-from data.needs import checked_email, get_hashed_password, check_password_hashed, random_avatar, password_check_regular
+from data.needs import checked_email, get_hashed_password, check_password_hashed,\
+    random_avatar, password_check_regular, checked_avatar
 
 from forms.setting import SettingForm
 from forms.comments import CommentsForm
@@ -22,6 +23,21 @@ app.config['SECRET_KEY'] = 'yandex_teacher_secret_key'
 code_for_email, param_for_user = "", []
 login_manager = LoginManager()
 login_manager.init_app(app)
+
+
+@app.route('/delete_comment/<int:id>', methods=['GET', 'POST'])
+@login_required
+def delete_comment(id):
+    db_sess = db_session.create_session()
+    comment = db_sess.query(Comments).filter(Comments.id == id).first()
+    post_id = comment.post_id
+    if comment and current_user == comment.user:
+        db_sess.delete(comment)
+        db_sess.commit()
+    else:
+        abort(404)
+    return redirect(f'/post/{post_id}')
+
 
 
 @app.route('/shop', methods=['GET', 'POST'])
@@ -157,15 +173,12 @@ def str_10():
     return render_template("news.html", news=news)
 
 
-#Не закончено
 @app.route('/create_post', methods=['GET', 'POST'])
 @login_required
 def str_9():
     if current_user.role in ['Менеджер', 'Админ']:
-        print("ok")
         form = PostsForm()
         if form.validate_on_submit():
-            print("ok2")
             db_sess = db_session.create_session()
             post = Posts()
             post.type = form.type_post.data
@@ -187,7 +200,6 @@ def str_9():
             current_user.posts.append(post)
             db_sess.merge(current_user)
             db_sess.commit()
-            print("ok3")
             return redirect('/lecture')
         return render_template('creater_post.html', form=form, title="Создание поста")
     else:
@@ -210,25 +222,27 @@ def str_7():
     db_sess = db_session.create_session()
     user = db_sess.query(User).filter(User.id == current_user.id).first()
     if user:
-        if request.method == 'GET':
+        if request.method == 'POST':
             if check_password_hashed(request.form["code_for_email"], user.hashed_password):
+                print("ok")
                 for post in user.posts:
-                    if os.path.isfile('static/img/Posts/' + post.image) and post.image != 'Empty.png':
-                        os.remove('static/img/Posts/' + post.image)
-                        for comment in post.comments:
-                            db_sess.delete(comment)
-                        db_sess.delete(post)
-                        for comment in user.comments:
-                            db_sess.delete(comment)
-                        if os.path.isfile('static/img/Ava/' + user.avatar):
-                            os.remove('static/img/Avatars/' + user.avatar)
-                        db_sess.delete(user)
-                        db_sess.commit()
-                        return redirect("/")
+                    if os.path.isfile('static/img/post/' + post.photo):
+                        os.remove('static/img/post/' + post.photo)
+                    for comment in post.comments:
+                        db_sess.delete(comment)
+                    db_sess.delete(post)
+                for comment in user.comments:
+                    db_sess.delete(comment)
+
+                if os.path.isfile('static/img/Ava/' + user.avatar) and not checked_avatar('static/img/Ava/' + user.avatar):
+                    os.remove('static/img/Ava/' + user.avatar)
+                db_sess.delete(user)
+                db_sess.commit()
+                return redirect("/")
             else:
                 message = "Пароль неверен"
-        return render_template('register_2_step.html', message=message, title="Удаление аккаунта!",
-                               subtitle="Подтвердите пароль")
+    return render_template('register_2_step.html', message=message, title="Удаление аккаунта!",
+                           subtitle="Подтвердите пароль")
 
 
 @app.route('/setting', methods=['POST', 'GET'])
