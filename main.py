@@ -70,6 +70,7 @@ def str_17(id):
 def str_16(id):
     db_sess = db_session.create_session()
     post = db_sess.query(Posts).filter(Posts.id == id).first()
+
     if post:
         db_sess.delete(post)
         db_sess.commit()
